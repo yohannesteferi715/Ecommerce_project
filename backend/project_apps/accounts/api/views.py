@@ -6,7 +6,7 @@ from rest_framework import status
 
 
 
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 class UserRegistrationView(APIView):
@@ -96,6 +96,12 @@ class  LoginView(APIView):
         return response
     
     
-    
-    
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        user = request.user
+        return Response({
+            "email": user.email,
+            "full_name": user.full_name,
+        })
