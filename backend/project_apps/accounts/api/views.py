@@ -84,7 +84,7 @@ class  LoginView(APIView):
             key="access_token",
             value=str(access_token),
             httponly=True,
-            secure=secure,      # IMPORTANT for dev
+            secure=secure,      
             samesite="Lax",
             max_age=60 * 15
         )
@@ -92,7 +92,7 @@ class  LoginView(APIView):
             key="refresh_token",
             value=str(refresh),
             httponly=True,
-            secure=secure,      # IMPORTANT for dev
+            secure=secure,      
             samesite="Lax",
             max_age=60 * 60 * 24 * 7
         )
@@ -172,3 +172,23 @@ class RefreshTokenView(APIView):
             return Response({"detail": "Invalid or expired refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
         
 
+
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        response = Response({"message": "Logged out"}, status=200)
+
+        response.delete_cookie("access_token", path="/")
+        response.delete_cookie("refresh_token", path="/")
+
+       
+        try:
+            token = RefreshToken(request.COOKIES.get("refresh_token"))
+            token.blacklist()
+        except:
+            pass
+
+        return response
