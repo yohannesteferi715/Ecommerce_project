@@ -152,7 +152,7 @@ class RefreshTokenView(APIView):
                 str(access_token),
                 httponly=True,
                 secure=secure,
-                samesite="Lax" if settings.DEBUG else "None",
+                samesite="Lax" ,
                 max_age=60*15,  # 15 minutes
                 path="/",
             )
@@ -161,7 +161,7 @@ class RefreshTokenView(APIView):
                 str(new_refresh),
                 httponly=True,
                 secure=secure,
-                samesite="Lax" if settings.DEBUG else "None",
+                samesite="Lax" ,
                 max_age=60*60*24*7,  # 7 days
                 path="/",
             )
