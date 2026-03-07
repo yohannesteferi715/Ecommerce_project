@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta 
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,19 +38,40 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "project_apps.accounts",
+    'django.contrib.sites',
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
+    # allauth
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    # providers
+    "allauth.socialaccount.providers.google",
+    # rest auth
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
 ]
 
+
 MIDDLEWARE = [
+
     "django.middleware.security.SecurityMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
+
     "django.middleware.common.CommonMiddleware",
+
     "django.middleware.csrf.CsrfViewMiddleware",
+
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+    "allauth.account.middleware.AccountMiddleware",
+
     "django.contrib.messages.middleware.MessageMiddleware",
+
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -136,6 +157,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "project_apps.accounts.auth.CookieJWTAuthentication",
@@ -143,10 +165,52 @@ REST_FRAMEWORK = {
 }
 
 
+
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+
+
+SITE_ID = 1
+
+
+
+AUTHENTICATION_BACKENDS = (
+
+'django.contrib.auth.backends.ModelBackend',
+
+'allauth.account.auth_backends.AuthenticationBackend',
+
+)
+
+
+
+# Allauth 5+ updated settings
+ACCOUNT_LOGIN_METHODS = {"email"}  # replaces ACCOUNT_AUTHENTICATION_METHOD
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]  # replaces EMAIL_REQUIRED + USERNAME_REQUIRED
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # keep this as is
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # keep this if your user model has no username
+
+
+
+SOCIALACCOUNT_PROVIDERS = {
+'google': {
+    'SCOPE': [
+        'profile',
+        'email',
+    ],
+    'AUTH_PARAMS': {
+        'access_type': 'online',
+    }
+}
+}
+
+
+
+REST_AUTH = {
+    "TOKEN_MODEL": None
 }

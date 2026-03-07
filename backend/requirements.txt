@@ -4,3 +4,8 @@ psycopg2-binary==2.9.9
 djangorestframework-simplejwt==5.3.0
 
 
+django-allauth
+dj-rest-auth
+
+requests>=2.30
+cryptography>=41.0
