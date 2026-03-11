@@ -40,3 +40,70 @@ class GoogleLogin(SocialLoginView):
 # 2. Custom endpoint to issue JWT cookies after OAuth login
 #    (called by frontend after SocialLoginView succeeds)
 # -------------------------------
+class OAuthSuccessView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user = request.user
+        if not user or not user.is_authenticated:
+            return Response(
+                {"detail": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        secure = not settings.DEBUG
+
+        response = Response(
+            {
+                "message": "OAuth login successful",
+                "user": {
+                    "email": user.email,
+                    "full_name": getattr(user, "full_name", ""),
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
+
+        # Set JWT cookies
+        response.set_cookie(
+            "access_token",
+            str(access),
+            httponly=True,
+            secure=secure,
+            samesite="Lax",
+            max_age=60 * 15,  # 15 min
+        )
+        response.set_cookie(
+            "refresh_token",
+            str(refresh),
+            httponly=True,
+            secure=secure,
+            samesite="Lax",
+            max_age=60 * 60 * 24 * 7,  # 7 days
+        )
+
+        return response
+
+
+# -------------------------------
+# 3. Current user info (OAuth users)
+# -------------------------------
+class OAuthCurrentUserView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        user = request.user
+        if not user or not user.is_authenticated:
+            return Response(
+                {"detail": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        return Response(
+            {
+                "email": user.email,
+                "full_name": getattr(user, "full_name", ""),
+            },
+            status=status.HTTP_200_OK,
+        )
