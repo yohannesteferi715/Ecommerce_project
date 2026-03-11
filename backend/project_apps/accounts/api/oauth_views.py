@@ -41,6 +41,14 @@ class GoogleLogin(SocialLoginView):
 #    (called by frontend after SocialLoginView succeeds)
 # -------------------------------
 class OAuthSuccessView(APIView):
+    """
+Handle successful OAuth login.
+
+Ensures the user is authenticated after OAuth, generates JWT access and
+refresh tokens using SimpleJWT, and stores them in secure HTTP-only cookies.
+Returns basic user information in the response.
+"""
+    
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -91,6 +99,7 @@ class OAuthSuccessView(APIView):
 # 3. Current user info (OAuth users)
 # -------------------------------
 class OAuthCurrentUserView(APIView):
+
     permission_classes = [AllowAny]
 
     def get(self, request):

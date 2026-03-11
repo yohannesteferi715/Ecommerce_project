@@ -9,3 +9,5 @@ dj-rest-auth
 
 requests>=2.30
 cryptography>=41.0
+
+drf-spectacular

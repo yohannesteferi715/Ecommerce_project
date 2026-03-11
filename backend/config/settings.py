@@ -51,6 +51,10 @@ INSTALLED_APPS = [
     # rest auth
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    
+    # drf-spectacular
+    "drf_spectacular",
+
 ]
 
 
@@ -161,7 +165,8 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "project_apps.accounts.auth.CookieJWTAuthentication",
-    )
+    ),
+ "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
@@ -211,4 +216,12 @@ SOCIALACCOUNT_PROVIDERS = {
 
 REST_AUTH = {
     "TOKEN_MODEL": None
+}
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Ecommerce_project API",
+    "DESCRIPTION": "API for Ecommerce_project app",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
