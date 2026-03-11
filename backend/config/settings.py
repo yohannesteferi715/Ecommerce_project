@@ -101,10 +101,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "ecommerce",  # must match POSTGRES_DB in compose.yaml
-        "USER": "postgres",  # must match POSTGRES_USER
-        "PASSWORD": "supersecret",  # must match POSTGRES_PASSWORD
-        "HOST": "db",  # IMPORTANT: service name in compose.yaml
+        "NAME": "ecommerce",  
+        "USER": "postgres", 
+        "PASSWORD": "supersecret",  
+        "HOST": "db", 
         "PORT": "5432",
     }
 }
@@ -175,7 +175,7 @@ SIMPLE_JWT = {
 
 
 
-SITE_ID = 1
+SITE_ID = 2
 
 
 
@@ -189,12 +189,10 @@ AUTHENTICATION_BACKENDS = (
 
 
 
-# Allauth 5+ updated settings
-ACCOUNT_LOGIN_METHODS = {"email"}  # replaces ACCOUNT_AUTHENTICATION_METHOD
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]  # replaces EMAIL_REQUIRED + USERNAME_REQUIRED
-ACCOUNT_EMAIL_VERIFICATION = "optional"  # keep this as is
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # keep this if your user model has no username
-
+ACCOUNT_LOGIN_METHODS = {"email"}  
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]  
+ACCOUNT_EMAIL_VERIFICATION = "optional"  
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  
 
 
 SOCIALACCOUNT_PROVIDERS = {
