@@ -37,8 +37,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "project_apps.accounts",
+    
     'django.contrib.sites',
+    
+    ###project_apps
+    'project_apps.products',
+    "project_apps.accounts",
+    
+    
+    ###
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
     "rest_framework_simplejwt",
