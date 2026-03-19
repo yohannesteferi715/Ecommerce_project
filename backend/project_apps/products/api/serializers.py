@@ -8,6 +8,9 @@ from project_apps.products.models import Category
 class CategorySerializer(serializers.ModelSerializer):
     slug=serializers.ReadOnlyField()
     
+
+    children=serializers.SerializerMethodField()
+    
     class Meta :
         model=Category
         
@@ -29,6 +32,15 @@ class CategorySerializer(serializers.ModelSerializer):
             
         return super().update(instance, validated_data)
         
+        
+        
+    def get_children(self,obj):
+        
+        if obj.children.exists():
+            
+            return CategorySerializer(obj.children.all(),many=True).data
+        
+        return []
         
         
         
