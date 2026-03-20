@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.text import slugify
 # Create your models here.
 
 from django.db import models
@@ -37,3 +37,8 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
+        
+    def save(self, *args, **kwargs):
+        if not self.slug or self.slug != slugify(self.name):
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)

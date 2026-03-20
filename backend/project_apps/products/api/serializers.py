@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from django.utils.text import slugify
 
-from project_apps.products.models import Category
+from project_apps.products.models import Category 
 
 class CategorySerializer(serializers.ModelSerializer):
     slug=serializers.ReadOnlyField()
