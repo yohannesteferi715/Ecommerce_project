@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from django.utils.text import slugify
 
-
 from project_apps.products.models import Category
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -43,4 +42,4 @@ class CategorySerializer(serializers.ModelSerializer):
         return []
         
         
-        
+    
