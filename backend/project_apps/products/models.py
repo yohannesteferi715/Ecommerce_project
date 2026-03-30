@@ -42,3 +42,6 @@ class Category(models.Model):
         if not self.slug or self.slug != slugify(self.name):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+        
+        
+        

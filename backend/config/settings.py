@@ -111,12 +111,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "ecommerce",  
-        "USER": "postgres", 
-        "PASSWORD": "supersecret",  
-        "HOST": "db", 
-        "PORT": "5432",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -222,9 +218,9 @@ SOCIALACCOUNT_PROVIDERS = {
 
 
 REST_AUTH = {
-    "TOKEN_MODEL": None
+    "TOKEN_MODEL": None,
+    "USE_JWT": True,
 }
-
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ecommerce_project API",

@@ -18,6 +18,7 @@ from django.conf import settings
 
 
 class UserRegistrationView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
 
