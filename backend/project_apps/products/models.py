@@ -2,6 +2,9 @@ from django.db import models
 from django.utils.text import slugify
 
 from  django.contrib.auth import get_user_model
+
+
+from django.core.validators import MinValueValidator,MaxValueValidator
 # Create your models here.
 
 User=get_user_model()
@@ -77,7 +80,6 @@ class Attribute(models.Model):
 class AttributeValue(models.Model):
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, related_name='values')
     value = models.CharField(max_length=100)
-    extra_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     is_default = models.BooleanField(default=False)
     sort_order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -93,7 +95,7 @@ class AttributeValue(models.Model):
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
-    sku = models.CharField(max_length=100, unique=True)
+    sku = models.CharField(max_length=100, unique=True,blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     discount_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     stock = models.PositiveIntegerField(default=0)
@@ -102,6 +104,8 @@ class ProductVariant(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    discount_start = models.DateTimeField(null=True, blank=True)
+    discount_end = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.product.name} - {self.sku}"
@@ -119,14 +123,7 @@ class ProductVariantAttribute(models.Model):
         return f"{self.variant.sku} - {self.attribute.name}: {self.value.value}"
 
 
-class ProductVariantDynamicAttribute(models.Model):
-    variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE, related_name='dynamic_attributes')
-    attribute_name = models.CharField(max_length=100)
-    value = models.CharField(max_length=255)
-    extra_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    sort_order = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
 
 
 class ProductImage(models.Model):
@@ -144,10 +141,11 @@ class ProductImage(models.Model):
 class ProductReview(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
-    rating = models.PositiveSmallIntegerField()  # 1-5
+    rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(0),MaxValueValidator(1)])  
     comment = models.TextField(blank=True)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 
 class Tag(models.Model):

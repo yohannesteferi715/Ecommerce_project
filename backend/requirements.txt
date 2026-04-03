@@ -12,3 +12,7 @@ cryptography>=41.0
 drf-spectacular
 pillow
 setuptools<81
+
+cloudinary
+django-cloudinary-storage
+python-decouple
