@@ -98,22 +98,7 @@ class ProductCreateUpdateSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class ProductVariantCreateUpdateSerializer(serializers.ModelSerializer):
-    """Serializer for creating and updating product variants"""
-    
-    class Meta:
-        model = ProductVariant
-        fields = ['id', 'product', 'sku', 'price', 'discount_price', 'stock', 
-                  'weight', 'dimensions', 'is_active', 'discount_start', 'discount_end']
-    
-    def validate(self, data):
-        """Validate discount dates"""
-        if data.get('discount_start') and data.get('discount_end'):
-            if data['discount_start'] >= data['discount_end']:
-                raise serializers.ValidationError(
-                    "Discount end date must be after start date"
-                )
-        return data
+
     
     
     

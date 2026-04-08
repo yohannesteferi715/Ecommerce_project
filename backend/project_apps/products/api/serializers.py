@@ -100,14 +100,6 @@ class ProductImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'variant', 'image', 'image_url', 'alt_text', 
                   'is_featured', 'sort_order']
         read_only_fields = ['id']
-    ## u have used the     cloudinary
-    def get_image_url(self, obj):
-        """Get absolute URL of the image"""
-        request = self.context.get('request')
-        if obj.image and request:
-            return request.build_absolute_uri(obj.image.url)
-        return obj.image.url if obj.image else None
-    
     
     
 class ProductReviewSerializer(serializers.ModelSerializer):
@@ -203,13 +195,6 @@ class ProductListSerializer(serializers.ModelSerializer):
                   'max_price', 'average_rating', 'created_at']
         read_only_fields = ['id', 'views_count', 'sales_count', 'created_at']
     
-    def get_featured_image_url(self, obj):
-        """Get URL of featured image"""
-        request = self.context.get('request')
-        if obj.featured_image and request:
-            return request.build_absolute_uri(obj.featured_image.url)
-        return obj.featured_image.url if obj.featured_image else None
-    
     def get_min_price(self, obj):
         """Get minimum price among variants"""
         variants = obj.variants.filter(is_active=True)
@@ -257,12 +242,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
                   'reviews', 'average_rating', 'total_reviews', 'created_at', 'updated_at']
         read_only_fields = ['id', 'views_count', 'sales_count', 'created_at', 'updated_at']
     
-    def get_featured_image_url(self, obj):
-        """Get URL of featured image"""
-        request = self.context.get('request')
-        if obj.featured_image and request:
-            return request.build_absolute_uri(obj.featured_image.url)
-        return obj.featured_image.url if obj.featured_image else None
     
     def get_reviews(self, obj):
         """Get approved reviews"""
@@ -283,3 +262,44 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     
     
     
+    
+    
+class ProductCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating products"""
+    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all(), required=False)
+    
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'slug', 'description', 'category', 'is_active',
+                  'featured_image', 'tags']
+    
+    def create(self, validated_data):
+        """Create product with auto-generated slug if not provided"""
+        if not validated_data.get('slug'):
+            validated_data['slug'] = slugify(validated_data['name'])
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        """Update product with slug update if name changes"""
+        if 'name' in validated_data and 'slug' not in validated_data:
+            validated_data['slug'] = slugify(validated_data['name'])
+        return super().update(instance, validated_data)
+
+
+
+class ProductVariantCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for creating and updating product variants"""
+    
+    class Meta:
+        model = ProductVariant
+        fields = ['id', 'product', 'sku', 'price', 'discount_price', 'stock', 
+                  'weight', 'dimensions', 'is_active', 'discount_start', 'discount_end']
+    
+    def validate(self, data):
+        """Validate discount dates"""
+        if data.get('discount_start') and data.get('discount_end'):
+            if data['discount_start'] >= data['discount_end']:
+                raise serializers.ValidationError(
+                    "Discount end date must be after start date"
+                )
+        return data
