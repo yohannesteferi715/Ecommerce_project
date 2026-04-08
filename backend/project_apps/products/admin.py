@@ -1,5 +1,5 @@
 from django.contrib import admin
-from project_apps.products.models import Category
-# Register your models here.
+from .models import Category, Product, Attribute, AttributeValue, ProductVariant, ProductVariantAttribute, ProductImage, ProductReview, Tag
 
-admin.site.register(Category)
+for model in [Category, Product, Attribute, AttributeValue, ProductVariant, ProductVariantAttribute, ProductImage, ProductReview, Tag]:
+    admin.site.register(model)
