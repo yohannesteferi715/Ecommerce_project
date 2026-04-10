@@ -1,11 +1,13 @@
 from rest_framework.generics import (
+    RetrieveDestroyAPIView,
     
-    
-    ListCreateAPIView
+    ListCreateAPIView,
     
     
     
 )
+
+from .permissions import IsAdminOrReadOnly
 
 
 from project_apps.products.models import Category
@@ -22,7 +24,7 @@ class CategoryListCreateAPIView(ListCreateAPIView):
         permission_classes = [IsAdminOrReadOnly]
         filter_backends = [filters.SearchFilter, filters.OrderingFilter]
         search_fields = ['name']
-        ordering_fields = ['name', 'created_at']
+        ordering_fields = ['name']
         ordering = ['name']
     
         def get_queryset(self):
@@ -30,11 +32,16 @@ class CategoryListCreateAPIView(ListCreateAPIView):
             return Category.objects.filter(is_active=True,parent=None)
 
 
-
-####views for products ############
-
+#Product related endpoints
 
 
+class CategoryDetailAPIView(RetrieveDestroyAPIView):
+    """Retrieve, update or delete a category"""
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
+    lookup_field = 'slug'
+    lookup_url_kwarg = 'slug'
 
 
 
