@@ -1,18 +1,19 @@
 from rest_framework import serializers
-from django import models 
+
+from django.db import models 
+
 from django.utils.text import slugify
 
-from products.models  import (
+from project_apps.products.models  import (
     Product, Category, Attribute, AttributeValue, 
     ProductVariant, ProductVariantAttribute, 
     ProductImage, ProductReview,Tag
 )
 
 class CategorySerializer(serializers.ModelSerializer):
-    products_count = serializers.IntegerField(source='products.count', read_only=True)
+    
     slug=serializers.ReadOnlyField()
     
-
     children=serializers.SerializerMethodField()
     
     class Meta :
