@@ -96,5 +96,18 @@ class AttributeDetailAPIView(RetrieveUpdateDestroyAPIView):
 
 
 
+# Product Variant Attribute Views
+class ProductVariantAttributeListCreateAPIView(ListCreateAPIView):
+    """List variant attributes or create new"""
+    queryset = ProductVariantAttribute.objects.all()
+    serializer_class = ProductVariantAttributeSerializer
+    permission_classes = [IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['variant', 'attribute']
 
+class ProductVariantAttributeDetailAPIView(RetrieveUpdateDestroyAPIView):
+    """Retrieve, update or delete a variant attribute"""
+    queryset = ProductVariantAttribute.objects.all()
+    serializer_class = ProductVariantAttributeSerializer
+    permission_classes = [IsAdminUser]
 

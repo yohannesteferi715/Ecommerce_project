@@ -182,20 +182,7 @@ class ProductVariantDetailAPIView(RetrieveUpdateDestroyAPIView):
             return ProductVariantCreateUpdateSerializer
         return ProductVariantSerializer
 
-# Product Variant Attribute Views
-class ProductVariantAttributeListCreateAPIView(ListCreateAPIView):
-    """List variant attributes or create new"""
-    queryset = ProductVariantAttribute.objects.all()
-    serializer_class = ProductVariantAttributeSerializer
-    permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['variant', 'attribute']
 
-class ProductVariantAttributeDetailAPIView(RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a variant attribute"""
-    queryset = ProductVariantAttribute.objects.all()
-    serializer_class = ProductVariantAttributeSerializer
-    permission_classes = [IsAdminOrReadOnly]
 
 # Product Image Views
 class ProductImageListCreateAPIView(ListCreateAPIView):
