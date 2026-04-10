@@ -1,3 +1,6 @@
+from rest_framework.permissions import IsAdminUser
+
+
 from rest_framework.generics import (
     ListAPIView, RetrieveAPIView, CreateAPIView, 
     UpdateAPIView, DestroyAPIView, ListCreateAPIView,
@@ -59,7 +62,7 @@ class TagListCreateAPIView(ListCreateAPIView):
     """List all tags or create a new tag"""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminUser]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['name', 'created_at']
@@ -70,11 +73,26 @@ class TagDetailAPIView(RetrieveUpdateDestroyAPIView):
     """Retrieve, update or delete a tag"""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminUser]
     lookup_field = 'slug'
     lookup_url_kwarg = 'slug'
 
+# Attribute Views
+class AttributeListCreateAPIView(ListCreateAPIView):
+    """List all attributes or create a new attribute"""
+    queryset = Attribute.objects.all()
+    serializer_class = AttributeSerializer
+    permission_classes = [IsAdminUser]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name', 'created_at']
+    ordering = ['name']
 
+class AttributeDetailAPIView(RetrieveUpdateDestroyAPIView):
+    """Retrieve, update or delete an attribute"""
+    queryset = Attribute.objects.all()
+    serializer_class = AttributeSerializer
+    permission_classes = [IsAdminUser]
 
 
 

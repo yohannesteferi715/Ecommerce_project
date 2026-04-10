@@ -39,22 +39,7 @@ class CategoryDetailAPIView(RetrieveUpdateDestroyAPIView):
 
 
 
-# Attribute Views
-class AttributeListCreateAPIView(ListCreateAPIView):
-    """List all attributes or create a new attribute"""
-    queryset = Attribute.objects.all()
-    serializer_class = AttributeSerializer
-    permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name']
-    ordering_fields = ['name', 'created_at']
-    ordering = ['name']
 
-class AttributeDetailAPIView(RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete an attribute"""
-    queryset = Attribute.objects.all()
-    serializer_class = AttributeSerializer
-    permission_classes = [IsAdminOrReadOnly]
 
 # Attribute Value Views
 class AttributeValueListCreateAPIView(ListCreateAPIView):
