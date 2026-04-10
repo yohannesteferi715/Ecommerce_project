@@ -1,9 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.generics import (
-    ListAPIView, RetrieveAPIView, CreateAPIView, 
-    UpdateAPIView, DestroyAPIView, ListCreateAPIView,
-    RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
-)
+
 from rest_framework.response import Response
 from rest_framework import status, filters
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -12,19 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q, Avg, Count, F
 from django.utils import timezone
 
-from .serializers import (
-    CategorySerializer, TagSerializer, AttributeSerializer,
-    AttributeValueSerializer, ProductListSerializer, 
-    ProductDetailSerializer, ProductCreateUpdateSerializer,
-    ProductVariantSerializer, ProductVariantCreateUpdateSerializer,
-    ProductImageSerializer, ProductReviewSerializer,
-    ProductVariantAttributeSerializer
-)
-from products.models import (
-    Product, Category, Attribute, AttributeValue,
-    ProductVariant, ProductVariantAttribute,
-    ProductImage, ProductReview, Tag
-)
+
+
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 
 # Category Views
@@ -51,24 +36,8 @@ class CategoryDetailAPIView(RetrieveUpdateDestroyAPIView):
     lookup_field = 'slug'
     lookup_url_kwarg = 'slug'
 
-# Tag Views
-class TagListCreateAPIView(ListCreateAPIView):
-    """List all tags or create a new tag"""
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name']
-    ordering_fields = ['name', 'created_at']
-    ordering = ['name']
 
-class TagDetailAPIView(RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a tag"""
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    permission_classes = [IsAdminOrReadOnly]
-    lookup_field = 'slug'
-    lookup_url_kwarg = 'slug'
+
 
 # Attribute Views
 class AttributeListCreateAPIView(ListCreateAPIView):
