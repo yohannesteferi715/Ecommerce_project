@@ -199,11 +199,6 @@ class ProductImageListCreateAPIView(ListCreateAPIView):
             return ProductImage.objects.filter(variant_id=variant_id)
         return ProductImage.objects.all()
 
-class ProductImageDetailAPIView(RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a product image"""
-    queryset = ProductImage.objects.all()
-    serializer_class = ProductImageSerializer
-    permission_classes = [IsAdminOrReadOnly]
 
 # Product Review Views
 class ProductReviewListCreateAPIView(ListCreateAPIView):

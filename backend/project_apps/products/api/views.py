@@ -111,3 +111,28 @@ class ProductVariantAttributeDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProductVariantAttributeSerializer
     permission_classes = [IsAdminUser]
 
+# Product Image Views
+class ProductImageListCreateAPIView(ListCreateAPIView):
+    """List product images or upload new image"""
+    serializer_class = ProductImageSerializer
+    permission_classes = [IsAdminUser]
+    
+    def get_queryset(self):
+        product_id = self.kwargs.get('product_id')
+        variant_id = self.kwargs.get('variant_id')
+
+        queryset = ProductImage.objects.all()
+
+        if product_id:
+            queryset = queryset.filter(product_id=product_id)
+
+        if variant_id:
+            queryset = queryset.filter(variant_id=variant_id)
+
+        return queryset
+
+class ProductImageDetailAPIView(RetrieveUpdateDestroyAPIView):
+    """Retrieve, update or delete a product image"""
+    queryset = ProductImage.objects.all()
+    serializer_class = ProductImageSerializer
+    permission_classes = [IsAdminUser]

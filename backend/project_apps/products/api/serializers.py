@@ -98,7 +98,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ProductImage
-        fields = ['id', 'product', 'variant', 'image', 'image_url', 'alt_text', 
+        fields = ['id', 'product', 'variant', 'image','alt_text', 
                   'is_featured', 'sort_order']
         read_only_fields = ['id']
     
