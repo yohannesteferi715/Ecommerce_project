@@ -2,6 +2,11 @@ from rest_framework.permissions import (IsAdminUser,IsAuthenticatedOrReadOnly)
 
 from rest_framework.response import Response
 
+from rest_framework.views import APIView
+
+from rest_framework import filters
+
+
 from rest_framework import status
 
 from rest_framework.generics import (
@@ -190,14 +195,49 @@ class AdminReviewListAPIView(ListAPIView):
         return ProductReview.objects.select_related('user', 'product')
 
 class AdminReviewApproveAPIView(APIView):
-    """Approve a review (Admin only)"""
-    permission_classes = [IsAdminOrReadOnly]
-    
-    def post(self, request, pk):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
         review = get_object_or_404(ProductReview, pk=pk)
-        review.is_approved = True
-        review.save()
+
+        serializer = ProductReviewSerializer(
+            review, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
         return Response({
-            'message': 'Review approved successfully',
-            'review': ProductReviewSerializer(review).data
+            "message": "Review updated successfully",
+            "review": serializer.data
         }, status=status.HTTP_200_OK)
+        
+        
+# Product Variant Views
+
+class ProductVariantListCreateAPIView(ListCreateAPIView):
+    """List all variants or create a new variant"""
+    permission_classes = [IsAdminUser]
+    
+    
+    def get_queryset(self):
+        product_id = self.kwargs.get('product_id')
+        if product_id:
+            return ProductVariant.objects.filter(product_id=product_id)
+        return ProductVariant.objects.all()
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ProductVariantCreateUpdateSerializer
+        return ProductVariantSerializer
+    def perform_create(self, serializer):
+        serializer.save(product_id=self.kwargs['product_id'])
+        
+        
+class ProductVariantDetailAPIView(RetrieveUpdateDestroyAPIView):
+    """Retrieve, update or delete a product variant"""
+    queryset = ProductVariant.objects.all()
+    
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return ProductVariantCreateUpdateSerializer
+        return ProductVariantSerializer

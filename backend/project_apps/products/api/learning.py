@@ -158,29 +158,8 @@ class ProductDeleteAPIView(DestroyAPIView):
     lookup_url_kwarg = 'slug'
 
 # Product Variant Views
-class ProductVariantListCreateAPIView(ListCreateAPIView):
-    """List all variants or create a new variant"""
-    serializer_class = ProductVariantSerializer
-    
-    def get_queryset(self):
-        product_id = self.kwargs.get('product_id')
-        if product_id:
-            return ProductVariant.objects.filter(product_id=product_id)
-        return ProductVariant.objects.all()
-    
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return ProductVariantCreateUpdateSerializer
-        return ProductVariantSerializer
 
-class ProductVariantDetailAPIView(RetrieveUpdateDestroyAPIView):
-    """Retrieve, update or delete a product variant"""
-    queryset = ProductVariant.objects.all()
-    
-    def get_serializer_class(self):
-        if self.request.method in ['PUT', 'PATCH']:
-            return ProductVariantCreateUpdateSerializer
-        return ProductVariantSerializer
+
 
 
 
