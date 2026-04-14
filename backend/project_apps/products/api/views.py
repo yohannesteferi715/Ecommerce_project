@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import (IsAdminUser,IsAuthenticatedOrReadOnly)
 
 
 from rest_framework.generics import (
@@ -7,6 +7,7 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
 )
 
+from  django.shortcuts import get_object_or_404
 
 from project_apps.products.api.serializers import (
     CategorySerializer, TagSerializer, AttributeSerializer,
@@ -136,3 +137,37 @@ class ProductImageDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
     permission_classes = [IsAdminUser]
+
+# Product Review Views
+class ProductReviewListCreateAPIView(ListCreateAPIView):
+    """List product reviews or create a new review"""
+    serializer_class = ProductReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['rating', 'is_approved']
+    ordering_fields = ['rating', 'created_at']
+    ordering = ['-created_at']
+    
+    def get_queryset(self):
+        product_id = self.kwargs.get('product_id')
+        if product_id:
+            return ProductReview.objects.filter(
+                product_id=product_id, 
+                is_approved=True
+            )
+        return ProductReview.objects.filter(is_approved=True)
+
+    def perform_create(self, serializer):
+        product_id = self.kwargs.get('product_id')
+        product = get_object_or_404(Product, id=product_id, is_active=True)
+        serializer.save(user=self.request.user, product=product)
+        
+class ProductReviewDetailAPIView(RetrieveUpdateDestroyAPIView):
+    """Retrieve, update or delete a product review"""
+    queryset = ProductReview.objects.all()
+    serializer_class = ProductReviewSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+    
+    def perform_update(self, serializer):
+        # Reset approval status when review is updated
+        serializer.save(is_approved=False)

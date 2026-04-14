@@ -14,4 +14,14 @@ class IsAdminOrReadOnly(BasePermission):
         # Only admin users can modify
         return request.user and request.user.is_staff
     
+
+
+class IsOwnerOrReadOnly(BasePermission):
     
+    def has_object_permission(self, request, view, obj):
+        # Allow read-only methods
+        if request.method in SAFE_METHODS:
+            return True
+        
+        # Allow write only if user is owner
+        return obj.user == request.user
