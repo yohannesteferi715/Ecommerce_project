@@ -208,29 +208,8 @@ class ProductImageListCreateAPIView(ListCreateAPIView):
 
 
 # Admin Review Management Views
-class AdminReviewListAPIView(ListAPIView):
-    """List all reviews for admin with filtering"""
-    serializer_class = ProductReviewSerializer
-    permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['rating', 'is_approved', 'product']
-    search_fields = ['comment', 'user__email', 'user__name']
-    
-    def get_queryset(self):
-        return ProductReview.objects.all()
 
-class AdminReviewApproveAPIView(APIView):
-    """Approve a review (Admin only)"""
-    permission_classes = [IsAdminOrReadOnly]
-    
-    def post(self, request, pk):
-        review = get_object_or_404(ProductReview, pk=pk)
-        review.is_approved = True
-        review.save()
-        return Response({
-            'message': 'Review approved successfully',
-            'review': ProductReviewSerializer(review).data
-        }, status=status.HTTP_200_OK)
+
 
 # Search View
 class ProductSearchAPIView(ListAPIView):

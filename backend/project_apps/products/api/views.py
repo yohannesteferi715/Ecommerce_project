@@ -1,5 +1,8 @@
 from rest_framework.permissions import (IsAdminUser,IsAuthenticatedOrReadOnly)
 
+from rest_framework.response import Response
+
+from rest_framework import status
 
 from rest_framework.generics import (
     ListAPIView, RetrieveAPIView, CreateAPIView, 
@@ -24,7 +27,7 @@ from project_apps.products.models import (
     ProductVariant, ProductVariantAttribute,
     ProductImage, ProductReview, Tag
 )
-from .permissions import IsAdminOrReadOnly
+from .permissions import (IsAdminOrReadOnly,IsOwnerOrReadOnly)
 
 
 from project_apps.products.models import Category
@@ -155,7 +158,7 @@ class ProductReviewListCreateAPIView(ListCreateAPIView):
                 product_id=product_id, 
                 is_approved=True
             )
-        return ProductReview.objects.filter(is_approved=True)
+        
 
     def perform_create(self, serializer):
         product_id = self.kwargs.get('product_id')
@@ -171,3 +174,30 @@ class ProductReviewDetailAPIView(RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         # Reset approval status when review is updated
         serializer.save(is_approved=False)
+        
+        
+# Admin Review Management Views
+class AdminReviewListAPIView(ListAPIView):
+    """List all reviews for admin with filtering"""
+    
+    serializer_class = ProductReviewSerializer
+    permission_classes = [IsAdminUser]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['rating', 'is_approved', 'product']
+    search_fields = ['comment', 'user__email', 'user__name']
+    
+    def get_queryset(self):
+        return ProductReview.objects.select_related('user', 'product')
+
+class AdminReviewApproveAPIView(APIView):
+    """Approve a review (Admin only)"""
+    permission_classes = [IsAdminOrReadOnly]
+    
+    def post(self, request, pk):
+        review = get_object_or_404(ProductReview, pk=pk)
+        review.is_approved = True
+        review.save()
+        return Response({
+            'message': 'Review approved successfully',
+            'review': ProductReviewSerializer(review).data
+        }, status=status.HTTP_200_OK)
