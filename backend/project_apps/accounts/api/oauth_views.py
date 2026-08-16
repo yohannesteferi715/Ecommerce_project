@@ -2,7 +2,7 @@
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -99,16 +99,13 @@ Returns basic user information in the response.
 # 3. Current user info (OAuth users)
 # -------------------------------
 class OAuthCurrentUserView(APIView):
-
-    permission_classes = [AllowAny]
+    # R4 FIX: was AllowAny with a manual is_authenticated check, which is
+    # inconsistent. IsAuthenticated enforces the requirement at the framework
+    # level and matches how CurrentUserView works for standard JWT auth.
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        if not user or not user.is_authenticated:
-            return Response(
-                {"detail": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED
-            )
-
         return Response(
             {
                 "email": user.email,

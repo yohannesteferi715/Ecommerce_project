@@ -1,61 +1,55 @@
 from django.db import models
 from django.utils.text import slugify
+from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator, MaxValueValidator
 
-from  django.contrib.auth import get_user_model
-
-
-from django.core.validators import MinValueValidator,MaxValueValidator
-# Create your models here.
-
-User=get_user_model()
+User = get_user_model()
 
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True,blank=True)
+    slug = models.SlugField(unique=True, blank=True)
 
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='children'
+        related_name='children',
     )
 
     description = models.TextField(max_length=600)
-
     image = models.ImageField(upload_to='categories/', blank=True, null=True)
-
     sort_order = models.PositiveIntegerField(default=0)
-
     is_active = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        # B9 FIX: merged two conflicting Meta classes into one
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
         ordering = ['sort_order', 'name']
 
     def __str__(self):
         return self.name
-    class Meta:
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
-        
+
     def save(self, *args, **kwargs):
         if not self.slug or self.slug != slugify(self.name):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-        
 
-#Product related models defined below      
+
+# Product related models defined below
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='products'
+    )
     is_active = models.BooleanField(default=True)
     featured_image = models.ImageField(upload_to='products/featured/', null=True, blank=True)
     views_count = models.PositiveIntegerField(default=0)
@@ -95,7 +89,7 @@ class AttributeValue(models.Model):
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
-    sku = models.CharField(max_length=100, unique=True,blank=True)
+    sku = models.CharField(max_length=100, unique=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     discount_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     stock = models.PositiveIntegerField(default=0)
@@ -123,12 +117,13 @@ class ProductVariantAttribute(models.Model):
         return f"{self.variant.sku} - {self.attribute.name}: {self.value.value}"
 
 
-
-
-
 class ProductImage(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
-    variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, null=True, blank=True, related_name='images'
+    )
+    variant = models.ForeignKey(
+        ProductVariant, on_delete=models.CASCADE, null=True, blank=True, related_name='images'
+    )
     image = models.ImageField(upload_to='products/images/')
     alt_text = models.CharField(max_length=255, blank=True)
     is_featured = models.BooleanField(default=False)
@@ -141,15 +136,16 @@ class ProductImage(models.Model):
 class ProductReview(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
-    rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(0),MaxValueValidator(1)])  
+    # B4 FIX: MaxValueValidator was 1, corrected to 5
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
     comment = models.TextField(blank=True)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class Tag(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True)
-
-
