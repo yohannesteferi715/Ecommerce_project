@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-# R3 FIX: RefreshToken was imported twice; consolidated into one import
+
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 from project_apps.accounts.api.serializers import UserRegistrationSerializer
