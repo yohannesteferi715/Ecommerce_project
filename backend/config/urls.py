@@ -30,6 +30,7 @@ urlpatterns = [
     #  app API URLs
     path("api/accounts/", include("project_apps.accounts.api.urls")),
     path("api/products/", include("project_apps.products.api.urls")),
+    path("api/cart/", include("project_apps.cart.api.urls")),
     
     
     # Allauth URLs for OAuth callbacks

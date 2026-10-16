@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     ###project_apps
     'project_apps.products',
     "project_apps.accounts",
+    "project_apps.cart",
     
     
     ###
@@ -125,8 +126,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("POSTGRES_DB"),
+        "USER": config("POSTGRES_USER"),
+        "PASSWORD": config("POSTGRES_PASSWORD"),
+        "HOST": config("POSTGRES_HOST"),
+        "PORT": config("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -255,3 +260,10 @@ cloudinary.config(
 
 # Use Cloudinary for file storage
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# ---------------------------------------------------------------------------
+# Cart settings
+# ---------------------------------------------------------------------------
+# Maximum quantity of a single variant that a customer can hold in their cart.
+# Adjust this value to suit your inventory and business rules.
+MAX_CART_ITEM_QUANTITY = 99

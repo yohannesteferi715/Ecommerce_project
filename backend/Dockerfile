@@ -11,9 +11,8 @@ WORKDIR /app
 # Copy requirements first for caching
 COPY requirements.txt .
 
-# Upgrade pip and install Python dependencies
-RUN python -m pip install --upgrade pip
-RUN python -m pip install -r requirements.txt
+# Install Python dependencies (no separate pip upgrade to avoid PyPI timeout)
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the project code
 COPY . .
