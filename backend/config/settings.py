@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'project_apps.products',
     "project_apps.accounts",
     "project_apps.cart",
+    "project_apps.orders",
     
     
     ###
@@ -267,3 +268,7 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # Maximum quantity of a single variant that a customer can hold in their cart.
 # Adjust this value to suit your inventory and business rules.
 MAX_CART_ITEM_QUANTITY = 99
+
+# ISO 4217 code stored on orders. All catalog prices currently use 2 decimal
+# places; checkout quantizes to the same scale. No FX conversion is implemented.
+DEFAULT_CURRENCY = "USD"

@@ -17,8 +17,7 @@ Design notes
   ProductVariant at query time.  The orders app must snapshot prices at
   checkout time — that is not the cart's responsibility.
 - A database-level UniqueConstraint on (user, status='active') prevents
-  concurrent requests from creating duplicate active carts.  SQLite honours
-  partial indexes since version 3.8.9 (Django's minimum supported version).
+  duplicate active carts.
 - created_at / updated_at follow the convention of every other model in this
   project.
 """
