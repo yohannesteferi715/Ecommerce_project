@@ -31,6 +31,8 @@ urlpatterns = [
     path("api/accounts/", include("project_apps.accounts.api.urls")),
     path("api/products/", include("project_apps.products.api.urls")),
     path("api/cart/", include("project_apps.cart.api.urls")),
+    path("api/checkout/", include("project_apps.orders.api.checkout_urls")),
+    path("api/orders/", include("project_apps.orders.api.urls")),
     
     
     # Allauth URLs for OAuth callbacks
